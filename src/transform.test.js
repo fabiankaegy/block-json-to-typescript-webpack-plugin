@@ -59,6 +59,14 @@ describe('transform', () => {
 		expect(typeDeclarationString).toMatchSnapshot();
 	});
 
+	test('handles empty attributes', () => {
+		const typeDeclaration = createAttributesInterface({}, 'TestAttributes');
+
+		const typeDeclarationString = printTypeDeclaration(typeDeclaration);
+
+		expect(typeDeclarationString).toMatchSnapshot();
+	})
+
 	test('prints block context type declaration', () => {
 		const contextPropertyDeclaration = createContextInterface({}, 'TestContext');
 		const typeDeclarationString = printTypeDeclaration(contextPropertyDeclaration);
