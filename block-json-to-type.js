@@ -4,18 +4,18 @@ const camelCase = require('camelcase');
 
 const { printTypeDeclaration, createAttributesInterface, createBlockInterface, createContextInterface } = require('./src/transform');
 
-class JsonToDtsPlugin {
+class BlockJsonToTypescriptWebpackPlugin {
 	constructor(options) {
 		this.options = options || {};
 	}
 
 	apply(compiler) {
-		compiler.hooks.afterEmit.tapAsync('JsonToDtsPlugin', (compilation, callback) => {
+		compiler.hooks.afterEmit.tapAsync('BlockJsonToTypescriptWebpackPlugin', (compilation, callback) => {
 			const { source, target } = this.options;
 
 			// Check if both source and target options are provided
 			if (!source || !target) {
-				console.error('JsonToDtsPlugin: Both source and target options are required.');
+				console.error('BlockJsonToTypescriptWebpackPlugin: Both source and target options are required.');
 				callback();
 				return;
 			}
@@ -35,7 +35,7 @@ class JsonToDtsPlugin {
 			fs.writeFileSync(target, tsDeclaration, 'utf8');
 
 			// Log a message to the console
-			console.log(`JsonToDtsPlugin: Successfully transformed ${source} to ${target}`);
+			console.log(`BlockJsonToTypescriptWebpackPlugin: Successfully transformed ${source} to ${target}`);
 
 			// Continue with the webpack build process
 			callback();
@@ -56,7 +56,7 @@ class JsonToDtsPlugin {
 		// Write the initial TypeScript declaration to the specified target file
 		fs.writeFileSync(target, initialDeclaration, 'utf8');
 
-		console.log(`JsonToDtsPlugin: Created ${target}`);
+		console.log(`BlockJsonToTypescriptWebpackPlugin: Created ${target}`);
 	}
 
 	generateTypeDeclaration(jsonContent) {
@@ -88,6 +88,6 @@ class JsonToDtsPlugin {
 	}
 }
 
-module.exports = JsonToDtsPlugin;
+module.exports = BlockJsonToTypescriptWebpackPlugin;
 
 
