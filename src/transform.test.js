@@ -34,7 +34,23 @@ describe('transform', () => {
 				},
 				integerAttribute: {
 					type: 'integer'
-				}
+				},
+				nullAttribute: {
+					type: 'null'
+				},
+				unionTypeAttribute: {
+					type: ['string', 'number']
+				},
+				enumTypeAttribute: {
+					type: 'string',
+					enum: ['foo', 'bar']
+				},
+				nullableAttribute: {
+					type: ['string', 'null']
+				},
+				enumTypeAttributeWithoutType: {
+					enum: ['foo', 'bar', false, 1000, []]
+				},
 			},
 		}, 'TestAttributes');
 
