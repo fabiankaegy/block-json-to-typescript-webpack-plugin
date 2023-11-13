@@ -192,6 +192,87 @@ const createBlockInterface = ( blockMetadata, InterfaceName, options ) => {
 		voidTypeReference,
 	);
 
+	const insertBlocksAfterMethodDeclaration = ts.factory.createMethodSignature(
+		undefined, // modifiers
+		ts.factory.createIdentifier("insertBlocksAfter"), // name
+		undefined, // questionToken
+		undefined, // typeParameters
+		[ // parameters
+			ts.factory.createParameterDeclaration(
+				undefined, // decorators
+				undefined, // dotDotDotToken
+				undefined, // name
+				ts.factory.createIdentifier("block"),
+				anyTypeReference,
+				undefined, // initializer
+			),
+		],
+		voidTypeReference,
+	);
+
+	const mergeBlocksMethodDeclaration = ts.factory.createMethodSignature(
+		undefined, // modifiers
+		ts.factory.createIdentifier("mergeBlocks"), // name
+		undefined, // questionToken
+		undefined, // typeParameters
+		[ // parameters
+			ts.factory.createParameterDeclaration(
+				undefined, // decorators
+				undefined, // dotDotDotToken
+				undefined, // name
+				ts.factory.createIdentifier("blocks"),
+				arrayTypeReference,
+				undefined, // initializer
+			),
+		],
+		voidTypeReference,
+	);
+
+	const onRemoveMethodDeclaration = ts.factory.createMethodSignature(
+		undefined, // modifiers
+		ts.factory.createIdentifier("onRemove"), // name
+		undefined, // questionToken
+		undefined, // typeParameters
+		[ // parameters
+			ts.factory.createParameterDeclaration(
+				undefined, // decorators
+				undefined, // dotDotDotToken
+				undefined, // name
+				ts.factory.createIdentifier("callback"),
+				anyTypeReference,
+				undefined, // initializer
+			),
+		],
+		voidTypeReference,
+	);
+
+	const onReplaceMethodDeclaration = ts.factory.createMethodSignature(
+		undefined, // modifiers
+		ts.factory.createIdentifier("onReplace"), // name
+		undefined, // questionToken
+		undefined, // typeParameters
+		[ // parameters
+			ts.factory.createParameterDeclaration(
+				undefined, // decorators
+				undefined, // dotDotDotToken
+				undefined, // name
+				ts.factory.createIdentifier("callback"),
+				anyTypeReference,
+				undefined, // initializer
+			),
+		],
+		voidTypeReference,
+	);
+
+	const toggleSelectionMethodDeclaration = ts.factory.createMethodSignature(
+		undefined, // modifiers
+		ts.factory.createIdentifier("toggleSelection"), // name
+		undefined, // questionToken
+		undefined, // typeParameters
+		[], // parameters
+		voidTypeReference,
+	);
+
 	const attributesPropertyDeclaration = ts.factory.createPropertySignature(
 		[readonlyModifier],
 		ts.factory.createIdentifier("attributes"),
@@ -221,6 +302,12 @@ const createBlockInterface = ( blockMetadata, InterfaceName, options ) => {
 			attributesPropertyDeclaration,
 			contextPropertyDeclaration,
 			setAttributesMethodDeclaration,
+			insertBlocksAfterMethodDeclaration,
+			mergeBlocksMethodDeclaration,
+			onRemoveMethodDeclaration,
+			onReplaceMethodDeclaration,
+			toggleSelectionMethodDeclaration,
+
 		],
 	);
 

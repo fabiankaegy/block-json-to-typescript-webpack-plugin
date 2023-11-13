@@ -28,5 +28,10 @@ exports[`transform prints block type declaration 1`] = `
     readonly attributes: TestBlockAttributes;
     readonly context: undefined;
     setAttributes(attributes: Partial<TestBlockAttributes>): void;
+    insertBlocksAfter(block: any): void;
+    mergeBlocks(blocks: Array<any>): void;
+    onRemove(callback: any): void;
+    onReplace(callback: any): void;
+    toggleSelection(): void;
 }"
 `;
