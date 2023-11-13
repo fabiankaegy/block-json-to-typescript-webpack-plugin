@@ -1,6 +1,7 @@
 const ts = require('typescript');
 
 const anyTypeReference = ts.factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword);
+const undefinedTypeReference = ts.factory.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword);
 const stringTypeReference = ts.factory.createTypeReferenceNode("string");
 const numberTypeReference = ts.factory.createTypeReferenceNode("number");
 const booleanTypeReference = ts.factory.createTypeReferenceNode("boolean");
@@ -82,6 +83,57 @@ const createAttributesInterface = ( blockMetadata, InterfaceName ) => {
 	return blockAttributesDeclaration;
 };
 
+const createContextInterface = ( blockMetadata, InterfaceName ) => {
+	const usesContext = blockMetadata.usesContext;
+
+	const contextProperties = [];
+
+	if ( usesContext && usesContext.length ) {
+		usesContext.forEach((contextKey) => {
+
+			let contextTypeReference = anyTypeReference;
+			let isOptional = false;
+
+			if ( contextKey === 'postType' ) {
+				contextTypeReference = stringTypeReference;
+			}
+
+			if ( contextKey === 'postId' ) {
+				contextTypeReference = numberTypeReference;
+			}
+
+			if ( contextKey === 'queryId' ) {
+				contextTypeReference = numberTypeReference;
+				isOptional = true;
+			}
+
+			if ( contextKey === 'query' ) {
+				contextTypeReference = objectTypeReference;
+				isOptional = true;
+			}
+			
+			contextProperties.push(
+				ts.factory.createPropertySignature(
+					[readonlyModifier],
+					ts.factory.createIdentifier(contextKey),
+					isOptional ? ts.factory.createToken(ts.SyntaxKind.QuestionToken): undefined, 
+					contextTypeReference,
+				)
+			);
+		});
+	}
+
+	const contextInterfaceDeclaration = ts.factory.createInterfaceDeclaration(
+		undefined,
+		ts.factory.createIdentifier(InterfaceName),
+		undefined,
+		undefined,
+		contextProperties
+	);
+
+	return contextInterfaceDeclaration;
+};
+
 const createInterfaceReference = ( interfaceName ) => {
 	return ts.factory.createTypeReferenceNode(interfaceName);
 }
@@ -103,11 +155,13 @@ const createBlockInterface = ( blockMetadata, InterfaceName, options ) => {
 		createInterfaceReference(attributesInterfaceName),
 	);
 
+	const hasContexts = blockMetadata.usesContext && blockMetadata.usesContext.length;
+
 	const contextPropertyDeclaration = ts.factory.createPropertySignature(
 		[readonlyModifier],
 		ts.factory.createIdentifier("context"),
-		ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-		createInterfaceReference(contextInterfaceName),
+		undefined,
+		createInterfaceReference(hasContexts ? contextInterfaceName : undefinedTypeReference),
 	);
 	
 	const blockInterfaceDeclaration = ts.factory.createInterfaceDeclaration(
@@ -137,6 +191,7 @@ const printTypeDeclaration = ( typeDeclaration ) => {
 module.exports = {
 	printTypeDeclaration,
 	createAttributesInterface,
+	createContextInterface,
 	createInterfaceReference,
 	createBlockInterface,
 };

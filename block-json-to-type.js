@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const camelCase = require('camelcase');
 
-const { printTypeDeclaration, createAttributesInterface, createBlockInterface } = require('./src/transform');
+const { printTypeDeclaration, createAttributesInterface, createBlockInterface, createContextInterface } = require('./src/transform');
 
 class JsonToDtsPlugin {
 	constructor(options) {
@@ -76,7 +76,11 @@ class JsonToDtsPlugin {
 			contextInterfaceName,
 		});
 
+		const contextInterface = createContextInterface(blockMetadata, contextInterfaceName);
+
 		let result = printTypeDeclaration(attributesInterface);
+		result += '\n\n';
+		result += printTypeDeclaration(contextInterface);
 		result += '\n\n';
 		result += printTypeDeclaration(blockDeclaration);
 

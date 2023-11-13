@@ -1,4 +1,4 @@
-const { printTypeDeclaration, createAttributesInterface, createBlockInterface } = require('./transform');
+const { printTypeDeclaration, createAttributesInterface, createContextInterface, createBlockInterface } = require('./transform');
 
 describe('transform', () => {
 	test('it works', () => {
@@ -40,6 +40,12 @@ describe('transform', () => {
 
 		const typeDeclarationString = printTypeDeclaration(typeDeclaration);
 
+		expect(typeDeclarationString).toMatchSnapshot();
+	});
+
+	test('prints block context type declaration', () => {
+		const contextPropertyDeclaration = createContextInterface({}, 'TestContext');
+		const typeDeclarationString = printTypeDeclaration(contextPropertyDeclaration);
 		expect(typeDeclarationString).toMatchSnapshot();
 	});
 

@@ -14,6 +14,11 @@ exports[`transform prints attribute type declaration 1`] = `
 }"
 `;
 
+exports[`transform prints block context type declaration 1`] = `
+"interface TestContext {
+}"
+`;
+
 exports[`transform prints block type declaration 1`] = `
 "interface TestBlock {
     readonly clientId: string;
