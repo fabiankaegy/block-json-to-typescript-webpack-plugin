@@ -10,7 +10,7 @@
 		"url": "https://github.com/fabiankaegy/block-json-to-typescript-webpack-plugin/issues"
 	},
 	"homepage": "https://github.com/fabiankaegy/block-json-to-typescript-webpack-plugin#readme",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"main": "block-json-to-type.js",
 	"license": "LGPL-2.1-or-later",
 	"dependencies": {
