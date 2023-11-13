@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform prints attribute type declaration 1`] = `
+"interface TestAttributes {
+    readonly stringAttribute?: string;
+    readonly numberAttribute?: number;
+    readonly booleanAttribute?: boolean;
+    readonly arrayAttribute?: Array<any>;
+    readonly objectAttribute?: Record<string, any>;
+    readonly randomAttribute?: any;
+    readonly objectAttributeWithDefault: Record<string, any>;
+    readonly integerAttribute?: number;
+    readonly style?: Record<string, any>;
+}"
+`;
+
+exports[`transform prints block type declaration 1`] = `
+"interface TestBlock {
+    readonly clientId: string;
+    readonly attributes: TestBlockAttributes;
+    readonly context?: TestBlockContext;
+}"
+`;

@@ -1,23 +1,8 @@
 const fs = require('fs');
 const path = require('path');
-const ts = require('typescript');
 const camelCase = require('camelcase');
 
-const anyTypeReference = ts.factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword);
-const stringTypeReference = ts.factory.createTypeReferenceNode("string");
-const numberTypeReference = ts.factory.createTypeReferenceNode("number");
-const booleanTypeReference = ts.factory.createTypeReferenceNode("boolean");
-const arrayTypeReference = ts.factory.createTypeReferenceNode("Array", [anyTypeReference]);
-
-const objectTypeReference = ts.factory.createTypeReferenceNode("Record", [stringTypeReference, anyTypeReference]);
-
-const readonlyModifier = ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword);
-const declareModifier = ts.factory.createModifier(ts.SyntaxKind.DeclareKeyword);
-
-function hasBlockSupport(block, feature) {
-	return !! block.supports[feature];
-}
-
+const { printTypeDeclaration, createAttributesInterface, createBlockInterface } = require('./src/transform');
 
 class JsonToDtsPlugin {
 	constructor(options) {
@@ -74,80 +59,26 @@ class JsonToDtsPlugin {
 		console.log(`JsonToDtsPlugin: Created ${target}`);
 	}
 
-	getTypeReference(type) {
-		switch (type) {
-			case "string":
-				return stringTypeReference;
-			case "number":
-			case "integer":
-				return numberTypeReference;
-			case "boolean":
-				return booleanTypeReference;
-			case "array":
-				return arrayTypeReference;
-			case "object":
-				return objectTypeReference;
-			default:
-				return anyTypeReference;
-		}
-	}
-
 	generateTypeDeclaration(jsonContent) {
 
-		const json = JSON.parse(jsonContent);
-		const attributes = json.attributes;
-		const name = json.name;
-
-		const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
-		const file = ts.createSourceFile("source.ts", "", ts.ScriptTarget.ESNext, false, ts.ScriptKind.TS);
-
-		const attributesProperties = Object.keys(attributes).map((attributeName) => {
-			const attribute = attributes[attributeName];
-			const { type, default: defaultValue } = attribute;
-			const hasDefaultValue = defaultValue !== undefined;
-
-			const typeReference = this.getTypeReference(type);
-
-			return ts.factory.createPropertySignature(
-				[readonlyModifier],
-				ts.factory.createIdentifier(attributeName),
-				hasDefaultValue ? undefined : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-				typeReference,
-			);
-		});
-
-		const styleAttribute = ts.factory.createPropertySignature(
-			[readonlyModifier],
-			ts.factory.createIdentifier("style"),
-			ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-			objectTypeReference,
-		);
-
-		attributesProperties.push(styleAttribute);
-
-		if (hasBlockSupport(json, 'align')) {
-			const alignAttribute = ts.factory.createPropertySignature(
-				[readonlyModifier],
-				ts.factory.createIdentifier("align"),
-				ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-				stringTypeReference,
-			);
-
-			attributesProperties.push(alignAttribute);
-		}
+		const blockMetadata = JSON.parse(jsonContent);
+		const name = blockMetadata.name;
 
 		const namespaceName = camelCase(name.replace('/', '-'), { pascalCase: true });
+		const attributesInterfaceName = `${namespaceName}Attributes`;
+		const contextInterfaceName = `${namespaceName}Context`;
+		const propsInterfaceName = `${namespaceName}Props`;
 
-		const blockAttributesDeclaration = ts.factory.createInterfaceDeclaration(
-			undefined,
-			namespaceName + "BlockAttributes",
-			undefined,
-			undefined,
-			attributesProperties
-		);
+		const attributesInterface = createAttributesInterface(blockMetadata, attributesInterfaceName);
 
-		let result = printer.printNode(ts.EmitHint.Unspecified, blockAttributesDeclaration, file);
-		result += '\n\n' + printer.printNode(ts.EmitHint.Unspecified, blockAttributesDeclaration, file);
+		const blockDeclaration = createBlockInterface(blockMetadata, propsInterfaceName, {
+			attributesInterfaceName,
+			contextInterfaceName,
+		});
+
+		let result = printTypeDeclaration(attributesInterface);
+		result += '\n\n';
+		result += printTypeDeclaration(blockDeclaration);
 
 		return result;
 	}
