@@ -1,0 +1,15 @@
+name: Run Unit Test Suite 
+on: [push, workflow_dispatch]
+
+jobs:
+  jest:
+    name: Jest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install NPM Dependencies
+        run: npm ci
+      - name: Run Unit Tests
+        run: npm test
