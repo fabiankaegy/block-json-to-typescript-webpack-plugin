@@ -6,6 +6,7 @@ const voidTypeReference = ts.factory.createKeywordTypeNode(ts.SyntaxKind.VoidKey
 const stringTypeReference = ts.factory.createTypeReferenceNode("string");
 const numberTypeReference = ts.factory.createTypeReferenceNode("number");
 const booleanTypeReference = ts.factory.createTypeReferenceNode("boolean");
+const nullTypeReference = ts.factory.createTypeReferenceNode("null");
 const arrayTypeReference = ts.factory.createTypeReferenceNode("Array", [anyTypeReference]);
 const objectTypeReference = ts.factory.createTypeReferenceNode("Record", [stringTypeReference, anyTypeReference]);
 const readonlyModifier = ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword);
@@ -23,6 +24,8 @@ const getTypeReference = (type) => {
 			return arrayTypeReference;
 		case "object":
 			return objectTypeReference;
+		case "null":
+			return nullTypeReference;
 		default:
 			return anyTypeReference;
 	}

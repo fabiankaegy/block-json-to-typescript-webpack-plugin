@@ -10,6 +10,7 @@ exports[`transform prints attribute type declaration 1`] = `
     readonly randomAttribute?: any;
     readonly objectAttributeWithDefault: Record<string, any>;
     readonly integerAttribute?: number;
+    readonly nullAttribute?: null;
     readonly style?: Record<string, any>;
 }"
 `;

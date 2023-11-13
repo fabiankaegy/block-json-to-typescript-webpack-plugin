@@ -34,7 +34,10 @@ describe('transform', () => {
 				},
 				integerAttribute: {
 					type: 'integer'
-				}
+				},
+				nullAttribute: {
+					type: 'null'
+				},
 			},
 		}, 'TestAttributes');
 
