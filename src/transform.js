@@ -78,20 +78,26 @@ const getTypeReferenceOfAttribute = (attribute) => {
 const createAttributesInterface = ( blockMetadata, InterfaceName ) => {
 	const attributes = blockMetadata.attributes;
 
-	const attributesProperties = Object.keys(attributes).map((attributeName) => {
-		const attribute = attributes[attributeName];
-		const { type, default: defaultValue, enum: typeEnum } = attribute;
-		const hasDefaultValue = defaultValue !== undefined;
+	const attributesProperties = [];
 
-		const typeReference = getTypeReferenceOfAttribute(attribute);
+	if ( attributes && Object.keys(attributes).length ) {
+		Object.keys(attributes).forEach((attributeName) => {
+			const attribute = attributes[attributeName];
+			const { type, default: defaultValue, enum: typeEnum } = attribute;
+			const hasDefaultValue = defaultValue !== undefined;
 
-		return ts.factory.createPropertySignature(
-			[readonlyModifier],
-			ts.factory.createIdentifier(attributeName),
-			hasDefaultValue ? undefined : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-			typeReference,
-		);
-	});
+			const typeReference = getTypeReferenceOfAttribute(attribute);
+
+			const property = ts.factory.createPropertySignature(
+				[readonlyModifier],
+				ts.factory.createIdentifier(attributeName),
+				hasDefaultValue ? undefined : ts.factory.createToken(ts.SyntaxKind.QuestionToken),
+				typeReference,
+			);
+
+			attributesProperties.push(property);
+		});
+	}
 
 	const styleAttribute = ts.factory.createPropertySignature(
 		[readonlyModifier],

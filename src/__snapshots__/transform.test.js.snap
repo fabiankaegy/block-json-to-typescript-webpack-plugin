@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`transform handles empty attributes 1`] = `
+"interface TestAttributes {
+    readonly style?: Record<string, any>;
+}"
+`;
+
 exports[`transform prints attribute type declaration 1`] = `
 "interface TestAttributes {
     readonly stringAttribute?: string;
