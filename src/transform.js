@@ -2,6 +2,7 @@ const ts = require('typescript');
 
 const anyTypeReference = ts.factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword);
 const undefinedTypeReference = ts.factory.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword);
+const voidTypeReference = ts.factory.createKeywordTypeNode(ts.SyntaxKind.VoidKeyword);
 const stringTypeReference = ts.factory.createTypeReferenceNode("string");
 const numberTypeReference = ts.factory.createTypeReferenceNode("number");
 const booleanTypeReference = ts.factory.createTypeReferenceNode("boolean");
@@ -138,6 +139,10 @@ const createInterfaceReference = ( interfaceName ) => {
 	return ts.factory.createTypeReferenceNode(interfaceName);
 }
 
+const createPartialInterfaceReference = ( interfaceName ) => {
+	return ts.factory.createTypeReferenceNode("Partial", [ts.factory.createTypeReferenceNode(interfaceName)]);
+}
+
 const createBlockInterface = ( blockMetadata, InterfaceName, options ) => {
 	const { attributesInterfaceName, contextInterfaceName } = options;
 
@@ -146,6 +151,45 @@ const createBlockInterface = ( blockMetadata, InterfaceName, options ) => {
 		ts.factory.createIdentifier("clientId"),
 		undefined,
 		stringTypeReference,
+	);
+
+	const isSelectedPropertyDeclaration = ts.factory.createPropertySignature(
+		[readonlyModifier],
+		ts.factory.createIdentifier("isSelected"),
+		undefined,
+		booleanTypeReference,
+	);
+
+	const isSelectionEnabledPropertyDeclaration = ts.factory.createPropertySignature(
+		[readonlyModifier],
+		ts.factory.createIdentifier("isSelectionEnabled"),
+		undefined,
+		booleanTypeReference,
+	);
+
+	const namePropertyDeclaration = ts.factory.createPropertySignature(
+		[readonlyModifier],
+		ts.factory.createIdentifier("name"),
+		undefined,
+		stringTypeReference,
+	);
+
+	const setAttributesMethodDeclaration = ts.factory.createMethodSignature(
+		undefined, // modifiers
+		ts.factory.createIdentifier("setAttributes"), // name
+		undefined, // questionToken
+		undefined, // typeParameters
+		[ // parameters
+			ts.factory.createParameterDeclaration(
+				undefined, // decorators
+				undefined, // dotDotDotToken
+				undefined, // name
+				ts.factory.createIdentifier("attributes"),
+				attributesInterfaceName ? createPartialInterfaceReference(attributesInterfaceName) : anyTypeReference,
+				undefined, // initializer
+			),
+		],
+		voidTypeReference,
 	);
 
 	const attributesPropertyDeclaration = ts.factory.createPropertySignature(
@@ -170,9 +214,13 @@ const createBlockInterface = ( blockMetadata, InterfaceName, options ) => {
 		undefined,
 		undefined,
 		[
+			namePropertyDeclaration,
+			isSelectedPropertyDeclaration,
+			isSelectionEnabledPropertyDeclaration,
 			clientIdPropertyDeclaration,
 			attributesPropertyDeclaration,
 			contextPropertyDeclaration,
+			setAttributesMethodDeclaration,
 		],
 	);
 

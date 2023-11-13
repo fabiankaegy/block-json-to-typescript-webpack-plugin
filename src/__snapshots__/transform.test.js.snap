@@ -21,8 +21,12 @@ exports[`transform prints block context type declaration 1`] = `
 
 exports[`transform prints block type declaration 1`] = `
 "interface TestBlock {
+    readonly name: string;
+    readonly isSelected: boolean;
+    readonly isSelectionEnabled: boolean;
     readonly clientId: string;
     readonly attributes: TestBlockAttributes;
-    readonly context?: TestBlockContext;
+    readonly context: undefined;
+    setAttributes(attributes: Partial<TestBlockAttributes>): void;
 }"
 `;
