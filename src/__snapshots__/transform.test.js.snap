@@ -33,5 +33,6 @@ exports[`transform prints block type declaration 1`] = `
     onRemove(callback: any): void;
     onReplace(callback: any): void;
     toggleSelection(): void;
+    [key: string]: any;
 }"
 `;

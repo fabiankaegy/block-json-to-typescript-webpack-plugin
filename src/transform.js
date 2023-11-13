@@ -288,6 +288,20 @@ const createBlockInterface = ( blockMetadata, InterfaceName, options ) => {
 		undefined,
 		createInterfaceReference(hasContexts ? contextInterfaceName : undefinedTypeReference),
 	);
+
+	const additionalFreeformProperties = ts.factory.createIndexSignature(
+		undefined, // modifiers
+		[ // parameters
+			ts.factory.createParameterDeclaration(
+				undefined,
+				undefined,
+				undefined,
+				ts.factory.createIdentifier("key"),
+				stringTypeReference,
+			),
+		],
+		anyTypeReference,
+	);
 	
 	const blockInterfaceDeclaration = ts.factory.createInterfaceDeclaration(
 		undefined,
@@ -307,7 +321,7 @@ const createBlockInterface = ( blockMetadata, InterfaceName, options ) => {
 			onRemoveMethodDeclaration,
 			onReplaceMethodDeclaration,
 			toggleSelectionMethodDeclaration,
-
+			additionalFreeformProperties
 		],
 	);
 
