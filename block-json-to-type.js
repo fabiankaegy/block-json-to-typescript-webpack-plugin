@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const camelCase = require('camelcase');
+const { sync: glob } = require('fast-glob');
 
 const { printTypeDeclaration, createAttributesInterface, createBlockInterface, createContextInterface } = require('./src/transform');
 
@@ -11,31 +12,43 @@ class BlockJsonToTypescriptWebpackPlugin {
 
 	apply(compiler) {
 		compiler.hooks.afterEmit.tapAsync('BlockJsonToTypescriptWebpackPlugin', (compilation, callback) => {
-			const { source, target } = this.options;
+			const { sourceDirectory, distDirectory } = this.options;
 
-			// Check if both source and target options are provided
-			if (!source || !target) {
-				console.error('BlockJsonToTypescriptWebpackPlugin: Both source and target options are required.');
-				callback();
-				return;
-			}
 
-			// Check if the TypeScript declaration file exists, create it if not
-			if (!fs.existsSync(target)) {
-				this.createDeclarationFile(target);
-			}
+			// get all block.json files in the blocks directory
+			const blockMetadataFiles = glob(
+				// glob only accepts forward-slashes this is required to make things work on Windows
+				`${sourceDirectory.replace(/\\/g, '/')}/**/block.json`,
+				{
+					absolute: true,
+				},
+			);
 
-			// Read the JSON file
-			const jsonContent = fs.readFileSync(source, 'utf8');
+			blockMetadataFiles.forEach((blockMetadataFile) => {
+				const source = blockMetadataFile;
+				const blockName = path.basename(path.dirname(blockMetadataFile));
+				const target = path.resolve(distDirectory, `${blockName}/types.d.ts`);
+				// Check if both source and target options are provided
+				if (!source || !target) {
+					console.error('BlockJsonToTypescriptWebpackPlugin: Both source and target options are required.');
+					callback();
+					return;
+				}
 
-			// Transform JSON to TypeScript declaration
-			const tsDeclaration = this.generateTypeDeclaration(jsonContent);
+				// Check if the TypeScript declaration file exists, create it if not
+				if (!fs.existsSync(target)) {
+					this.createDeclarationFile(target);
+				}
 
-			// Write the TypeScript declaration to the specified target file
-			fs.writeFileSync(target, tsDeclaration, 'utf8');
+				// Read the JSON file
+				const jsonContent = fs.readFileSync(source, 'utf8');
 
-			// Log a message to the console
-			console.log(`BlockJsonToTypescriptWebpackPlugin: Successfully transformed ${source} to ${target}`);
+				// Transform JSON to TypeScript declaration
+				const tsDeclaration = this.generateTypeDeclaration(jsonContent);
+
+				// Write the TypeScript declaration to the specified target file
+				fs.writeFileSync(target, tsDeclaration, 'utf8');
+			});
 
 			// Continue with the webpack build process
 			callback();

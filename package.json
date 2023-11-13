@@ -1,6 +1,7 @@
 {
 	"name": "block-json-to-typescript-webpack-plugin",
 	"dependencies": {
+		"fast-glob": "^3.3.2",
 		"jest": "^29.7.0"
 	},
 	"scripts": {
