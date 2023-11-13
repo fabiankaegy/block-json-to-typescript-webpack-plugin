@@ -11,6 +11,10 @@ exports[`transform prints attribute type declaration 1`] = `
     readonly objectAttributeWithDefault: Record<string, any>;
     readonly integerAttribute?: number;
     readonly nullAttribute?: null;
+    readonly unionTypeAttribute?: string | number;
+    readonly enumTypeAttribute?: "foo" | "bar";
+    readonly nullableAttribute?: string | null;
+    readonly enumTypeAttributeWithoutType?: "foo" | "bar" | false | 1000 | Record<string, any>;
     readonly style?: Record<string, any>;
 }"
 `;

@@ -38,15 +38,52 @@ const hasBlockSupport = (block, feature) => {
 	return !! block.supports[feature];
 }
 
+const getTypeReferenceOfAttribute = (attribute) => {
+	const { type, default: defaultValue, enum: typeEnum } = attribute;
+
+	if (typeEnum) {
+		return ts.factory.createUnionTypeNode(
+			typeEnum.map((enumValue) => {
+				const enumValueType = typeof enumValue;
+
+				if (enumValueType === 'string') {
+					return ts.factory.createLiteralTypeNode(ts.factory.createStringLiteral(enumValue));
+				}
+
+				if (enumValueType === 'number') {
+					return ts.factory.createLiteralTypeNode(ts.factory.createNumericLiteral(enumValue));
+				}
+
+				if (enumValueType === 'boolean') {
+					return ts.factory.createLiteralTypeNode(enumValue ? ts.factory.createTrue() : ts.factory.createFalse());
+				}
+
+				return getTypeReference(enumValueType);
+			})
+		);
+	}
+
+	if (Array.isArray(type)) {
+		return ts.factory.createUnionTypeNode(
+			type.map((type) => {
+				return getTypeReference(type);
+			})
+		);
+	}
+
+	return getTypeReference(type);
+};
+
+
 const createAttributesInterface = ( blockMetadata, InterfaceName ) => {
 	const attributes = blockMetadata.attributes;
 
 	const attributesProperties = Object.keys(attributes).map((attributeName) => {
 		const attribute = attributes[attributeName];
-		const { type, default: defaultValue } = attribute;
+		const { type, default: defaultValue, enum: typeEnum } = attribute;
 		const hasDefaultValue = defaultValue !== undefined;
 
-		const typeReference = getTypeReference(type);
+		const typeReference = getTypeReferenceOfAttribute(attribute);
 
 		return ts.factory.createPropertySignature(
 			[readonlyModifier],
