@@ -7,7 +7,7 @@ Automatically generate typings for block edit functions based on the content of 
 ```js
 // webpack.config.js
 const path = require('path');
-const BlockJsonToTypescriptWebpackPlugin = require('./webpack-plugins/block-json-to-type');
+const BlockJsonToTypescriptWebpackPlugin = require('block-json-to-typescript-webpack-plugin');
 
 module.exports = {
  plugins: [
