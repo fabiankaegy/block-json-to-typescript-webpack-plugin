@@ -1,5 +1,7 @@
 const ts = require('typescript');
 
+const { addAttributesGeneratedFromSupports } = require('./core-supports');
+
 const anyTypeReference = ts.factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword);
 const undefinedTypeReference = ts.factory.createKeywordTypeNode(ts.SyntaxKind.UndefinedKeyword);
 const voidTypeReference = ts.factory.createKeywordTypeNode(ts.SyntaxKind.VoidKeyword);
@@ -29,13 +31,6 @@ const getTypeReference = (type) => {
 		default:
 			return anyTypeReference;
 	}
-}
-
-const hasBlockSupport = (block, feature) => {
-	if (!block.supports) {
-		return false;
-	}
-	return !! block.supports[feature];
 }
 
 const getTypeReferenceOfAttribute = (attribute) => {
@@ -74,9 +69,8 @@ const getTypeReferenceOfAttribute = (attribute) => {
 	return getTypeReference(type);
 };
 
-
 const createAttributesInterface = ( blockMetadata, InterfaceName ) => {
-	const attributes = blockMetadata.attributes;
+	const attributes = addAttributesGeneratedFromSupports(blockMetadata);
 
 	const attributesProperties = [];
 
@@ -97,26 +91,6 @@ const createAttributesInterface = ( blockMetadata, InterfaceName ) => {
 
 			attributesProperties.push(property);
 		});
-	}
-
-	const styleAttribute = ts.factory.createPropertySignature(
-		[readonlyModifier],
-		ts.factory.createIdentifier("style"),
-		ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-		objectTypeReference,
-	);
-
-	attributesProperties.push(styleAttribute);
-
-	if (hasBlockSupport(blockMetadata, 'align')) {
-		const alignAttribute = ts.factory.createPropertySignature(
-			[readonlyModifier],
-			ts.factory.createIdentifier("align"),
-			ts.factory.createToken(ts.SyntaxKind.QuestionToken),
-			stringTypeReference,
-		);
-
-		attributesProperties.push(alignAttribute);
 	}
 
 	const blockAttributesDeclaration = ts.factory.createInterfaceDeclaration(
